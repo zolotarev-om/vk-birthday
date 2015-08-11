@@ -1,0 +1,62 @@
+{
+  "name": "zolotarev-om/vk-birthday",
+  "description": "Manager birthdays of friends in VKontakte. Powered by Laravel Framework.",
+  "version": "0.1.0",
+  "keywords": [
+    "vk",
+    "birthday",
+    "manager",
+    "framework",
+    "laravel"
+  ],
+  "license": "MIT",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Oleg Zolotarev",
+      "email": "zolotarev.om@gmail.com",
+      "homepage": "http://www.zolotarev-om.ru",
+      "role": "Developer"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git://github.com/zolotarev-om/VkApiPHP.git"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9",
+    "laravel/framework": "5.1.*",
+    "getjump/vk": "dev-master",
+    "laravel/socialite": "2.0.*",
+    "socialiteproviders/vkontakte": "1.1.*",
+    "laravelcollective/html": "5.1.*"
+  },
+  "require-dev": {
+    "fzaninotto/faker": "1.5.*",
+    "mockery/mockery": "0.9.*",
+    "phpunit/phpunit": "4.7.*",
+    "phpspec/phpspec": "2.2.*",
+    "barryvdh/laravel-debugbar": "v2.0.5",
+    "barryvdh/laravel-ide-helper": "v2.0.6",
+    "doctrine/dbal": "2.5.*",
+    "filp/whoops": "1.1.*"
+  },
+  "autoload": {
+    "classmap": [
+      "database"
+    ],
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/TestCase.php"
+    ]
+  },
+  "config": {
+    "preferred-install": "dist"
+  }
+}
