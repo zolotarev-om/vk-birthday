@@ -34,6 +34,7 @@ class SettingController extends Controller
 
     /**
      * Render settings page
+     *
      * @return $this
      */
     public function index()
@@ -45,6 +46,7 @@ class SettingController extends Controller
 
     /**
      * Add congratulaition message to DB and refresh page
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function addMessage()
@@ -62,6 +64,7 @@ class SettingController extends Controller
 
     /**
      * Delete congratulaition message from DB and refresh page
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function deleteMessage()
@@ -80,6 +83,7 @@ class SettingController extends Controller
 
     /**
      * Set/Update access token in DB and refresh page
+     * 
      * @return \Illuminate\Http\RedirectResponse
      */
     public function updateToken()
