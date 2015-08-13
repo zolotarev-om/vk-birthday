@@ -68,7 +68,7 @@ class AuthController extends Controller
     /**
      * If need authorize user, find or create in DB, login and redirect him
      *
-     * @param $request
+     * @param Request $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -88,7 +88,7 @@ class AuthController extends Controller
     /**
      * Redirect user to OAuth via Socialite
      *
-     * @return redirect
+     * @return \Illuminate\Http\RedirectResponse
      */
     private function getAuthorizationFirst()
     {
@@ -131,7 +131,7 @@ class AuthController extends Controller
 
 
     /**
-     * View login page OR login admin if APP_ENV = local
+     * View login page OR login admin if exist and APP_ENV = local
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
