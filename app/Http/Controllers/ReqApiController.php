@@ -157,7 +157,7 @@ class ReqApiController extends Controller
     }
 
     /**
-     * Send message to user wall
+     * If not env not local or debug not false send message to user wall, else dump to screen
      *
      * @param $uid int user id
      * @param $msg string congratulation message
@@ -172,7 +172,7 @@ class ReqApiController extends Controller
     }
 
     /**
-     * Send message to user PM
+     * If not env not local or debug not false send message to user PM, else dump to screen
      *
      * @param $uid int user id
      * @param $msg string congratulation message
