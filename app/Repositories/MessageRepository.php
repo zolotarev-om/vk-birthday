@@ -11,6 +11,8 @@ use Auth;
 class MessageRepository
 {
     /**
+     * Get a list of user messages
+     *
      * @return array
      */
     public function getMessageList()
@@ -24,6 +26,8 @@ class MessageRepository
     }
 
     /**
+     * Get user message text by id
+     *
      * @param $id
      *
      * @return mixed
@@ -41,6 +45,8 @@ class MessageRepository
     }
 
     /**
+     * Get one randomly a message user or create a user default message.
+     *
      * @return mixed
      */
     public function getRandomMessage()
@@ -58,7 +64,7 @@ class MessageRepository
     }
 
     /**
-     * Create first/default congratulation message
+     * Create first/default user congratulation message
      */
     private function createDefaultMessage()
     {
@@ -66,6 +72,8 @@ class MessageRepository
     }
 
     /**
+     * If this message does not yet have in the database that create it.
+     *
      * @param $text
      *
      * @return bool
@@ -84,6 +92,8 @@ class MessageRepository
     }
 
     /**
+     * Delete a message from a user database on its id.
+     *
      * @param $id
      *
      * @return bool|null

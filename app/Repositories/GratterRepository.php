@@ -19,6 +19,8 @@ class GratterRepository
 
 
     /**
+     * Check whether the user has sent congratulations to the friend this year
+     *
      * @param $uid
      *
      * @return bool
@@ -35,8 +37,7 @@ class GratterRepository
     }
 
     /**
-     *
-     *
+     * Eager loading sended user gratters in this year
      */
     private function getGratters()
     {
@@ -46,6 +47,8 @@ class GratterRepository
     }
 
     /**
+     * Add sended gratters from user to friends
+     *
      * @param $uid
      * @param $messageId
      */
@@ -63,9 +66,11 @@ class GratterRepository
     }
 
     /**
+     * Get the message id gratters
+     *
      * @param $uid
      *
-     * @return mixed
+     * @return int
      */
     public function gratterMessageId($uid)
     {
@@ -77,6 +82,8 @@ class GratterRepository
     }
 
     /**
+     * Get latest X gratters from user
+     *
      * @param int $count
      *
      * @return array

@@ -19,10 +19,12 @@ class UserRepository
     private $providers;
 
     /**
+     * Looking for the user, if it is not creating it. Check whether it is necessary update its data.
+     *
      * @param $userData
      * @param $provider
      *
-     * @return static
+     * @return User
      */
     public function findByUidOrCreate($userData, $provider)
     {
@@ -53,8 +55,10 @@ class UserRepository
 
 
     /**
-     * @param $userData
-     * @param $user
+     * Check whether it is necessary update user data
+     *
+     * @param $userData User
+     * @param $user User
      */
     public function checkIfUserNeedsUpdating($userData, $user)
     {
@@ -83,7 +87,9 @@ class UserRepository
     }
 
     /**
-     * @return mixed
+     * Get VK token authorized user
+     *
+     * @return string
      */
     public function getToken()
     {
@@ -93,6 +99,8 @@ class UserRepository
     }
 
     /**
+     * Once getting the providers relationship
+     *
      * TODO: rewrite method to use Cache
      */
     private function getProviders()
@@ -103,6 +111,8 @@ class UserRepository
     }
 
     /**
+     * Set/Update VK token authorized user
+     *
      * @param $token
      *
      * @return bool
@@ -120,7 +130,9 @@ class UserRepository
     }
 
     /**
-     * @return mixed
+     * Get VK uid authorized user
+     *
+     * @return int
      */
     public function getUid()
     {
