@@ -12,6 +12,21 @@ use Cache;
 class MessageRepository
 {
     /**
+     * List of user messages
+     *
+     * @var array
+     */
+    private $messageList = [];
+
+    /**
+     * MessageRepository constructor.
+     */
+    public function __construct()
+    {
+        $this->getMessageList();
+    }
+
+    /**
      * Get a list of user messages
      *
      * @return array
@@ -21,11 +36,12 @@ class MessageRepository
         $messages = Cache::remember('message_list_' . Auth::id(), 1, function () {
             return Auth::user()->messages()->get();
         });
-        $messageList = [];
+
         foreach ($messages as $message) {
-            $messageList[$message->id] = $message->text;
+            $this->messageList[$message->id] = $message->text;
         }
-        return $messageList;
+
+        return $this->messageList;
     }
 
     /**
@@ -39,11 +55,10 @@ class MessageRepository
     {
         $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
 
-        $message = Auth::user()->messages()->where('id', '=', $id)->first();
-        if (is_null($message)) {
+        if (!array_key_exists($id, $this->messageList)) {
             return false;
         } else {
-            return $message->text;
+            return $this->messageList[$id];
         }
     }
 
@@ -54,14 +69,13 @@ class MessageRepository
      */
     public function getRandomMessage()
     {
-        $message = Auth::user()->messages()->get();
-        if ($message->isEmpty()) {
-            $this->createDefaultMessage();
-            $message = Auth::user()->messages()->get()->first();
+        if (empty($this->messageList)) {
+            $message = $this->createDefaultMessage();
             return $message;
         } else {
-            $message = $message->shuffle()->first();
-            return $message;
+            $message = $this->messageList;
+            shuffle($message);
+            return $message[0];
         }
 
     }
@@ -71,7 +85,9 @@ class MessageRepository
      */
     private function createDefaultMessage()
     {
-        Auth::user()->messages()->create(['text' => 'С Днём Рождения!']);
+        $text = 'С Днём Рождения!';
+        Auth::user()->messages()->create(['text' => $text]);
+        return $text;
     }
 
     /**
