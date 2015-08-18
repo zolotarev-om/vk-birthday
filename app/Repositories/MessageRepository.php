@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Auth;
+use Cache;
 
 /**
  * Class MessageRepository
@@ -17,7 +18,9 @@ class MessageRepository
      */
     public function getMessageList()
     {
-        $messages = Auth::user()->messages()->get();
+        $messages = Cache::remember('message_list_' . Auth::id(), 1, function () {
+            return Auth::user()->messages()->get();
+        });
         $messageList = [];
         foreach ($messages as $message) {
             $messageList[$message->id] = $message->text;
@@ -85,6 +88,7 @@ class MessageRepository
         $notExist = Auth::user()->messages()->where('text', '=', $text)->get()->isEmpty();
         if ($notExist) {
             Auth::user()->messages()->create(['text' => $text]);
+            Cache::forget('message_list_' . Auth::id());
             return true;
         } else {
             return false;
