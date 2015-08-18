@@ -33,7 +33,7 @@ class MessageRepository
      */
     public function getMessageList()
     {
-        $messages = Cache::remember('message_list_' . Auth::id(), 1, function () {
+        $messages = Cache::remember('message_list_' . Auth::id(), 60, function () {
             return Auth::user()->messages()->get();
         });
 
