@@ -5,5 +5,5 @@
 @endsection
 
 @section('content')
-    Войти через ВКонтакте {!! link_to('login/vkontakte', 'START') !!}
+    Войти через ВКонтакте {!! link_to('login/vk', 'START') !!}
 @endsection
