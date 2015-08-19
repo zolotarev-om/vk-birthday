@@ -19,7 +19,7 @@ class CacheDynamic
      */
     public function handle($request, Closure $next)
     {
-        $uri = $request->getPathInfo();
+        $uri = $request->getUri();
         $userId = Auth::id();
 
         if (Cache::has($uri . '_' . $userId)) {
