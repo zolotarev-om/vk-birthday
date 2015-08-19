@@ -6,9 +6,7 @@ namespace App\Http\Controllers;
 use App\Repositories\UserRepository;
 use App\User;
 use Auth;
-use Illuminate\Http\Request;
 use Redirect;
-use Session;
 use Socialite;
 
 /**
@@ -18,94 +16,49 @@ use Socialite;
 class AuthController extends Controller
 {
     /**
+     * @const Provider name
+     */
+    const PROVIDER = 'vkontakte';
+
+    /**
      * @var UserRepository
      */
     private $users;
 
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var string provider name
-     */
-    private $provider;
-
-    /**
      * DI
      *
      * @param UserRepository $users
-     * @param Request        $request
      */
-    public function __construct(
-        UserRepository $users,
-        Request $request
-    ) {
+    public function __construct(UserRepository $users)
+    {
         $this->users = $users;
-        $this->request = $request;
-    }
-
-
-    /**
-     * Set or Get provider name from request and process login
-     *
-     * @param null|string $provider
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function preLogin($provider = null)
-    {
-        if (!empty($provider)) {
-            $this->provider = $provider;
-            Session::push('provider', $provider);
-        } else {
-            $this->provider = Session::pull('provider');
-        }
-        return $this->processLogin($this->request->all());
     }
 
     /**
-     * If need authorize user, find or create in DB, login and redirect him
+     * Redirect user to OAuth via Socialite
      *
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return redirect
      */
-    private function processLogin($request)
+    public function getAuthorizationFirst()
     {
-        if (!$request) {
-            return $this->getAuthorizationFirst();
-        }
-        $user = $this->users->findByUidOrCreate($this->getSocialUser(), $this->provider);
+        return Socialite::with(self::PROVIDER)->redirect();
+    }
+
+    /**
+     * Login user via Socialite
+     *
+     * @return redirect
+     */
+    public function loginSocialUser()
+    {
+        $socialUser = Socialite::with(self::PROVIDER)->user();
+        $user = $this->users->findByUidOrCreate($socialUser, self::PROVIDER);
 
         Auth::login($user, true);
 
         return $this->userHasLoggedIn();
     }
-
-
-    /**
-     * Redirect user to OAuth via Socialite
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    private function getAuthorizationFirst()
-    {
-        return Socialite::driver($this->provider)->redirect();
-    }
-
-
-    /**
-     * Get user via Socialite
-     *
-     * @return array
-     */
-    private function getSocialUser()
-    {
-        return Socialite::driver($this->provider)->user();
-    }
-
 
     /**
      * The user authentication passed, redirect
@@ -117,7 +70,6 @@ class AuthController extends Controller
         return Redirect::to('/');
     }
 
-
     /**
      * Logout user and redirect him
      *
@@ -128,7 +80,6 @@ class AuthController extends Controller
         Auth::logout();
         return Redirect::route('login');
     }
-
 
     /**
      * View login page OR login admin if exist and APP_ENV = local
