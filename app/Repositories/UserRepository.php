@@ -29,7 +29,7 @@ class UserRepository
      */
     public function findByUidOrCreate($userData, $provider)
     {
-        $user = Cache::remember('user_' . $userData->id, 60, function ($provider, $userData) {
+        $user = Cache::remember('user_' . $userData->id, 60, function () use ($userData, $provider) {
             return User::whereHas('providers', function ($query) use ($provider, $userData) {
                 $query->where('name', '=', $provider)->where('uid', '=', $userData->id);
             })->first();
@@ -103,8 +103,6 @@ class UserRepository
 
     /**
      * Once getting the providers relationship
-     *
-     * TODO: rewrite method to use Cache
      */
     private function getProviders()
     {
