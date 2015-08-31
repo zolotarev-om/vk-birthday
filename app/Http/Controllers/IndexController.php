@@ -80,8 +80,8 @@ class IndexController extends Controller
             $msg = $this->messageRep->getRandomMessage();
 
             foreach ($bdayers as $friend) {
-                $this->sendMessage($friend, $msg->text);
-                $this->gratterRep->addSendedGratters($friend['vk_id'], $msg->id);
+                $this->sendMessage($friend, current($msg)); //text message
+                $this->gratterRep->addSendedGratters($friend['vk_id'], key($msg)); // key(id) message
             }
         }
     }

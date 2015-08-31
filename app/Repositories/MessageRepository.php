@@ -73,9 +73,9 @@ class MessageRepository
             $message = $this->createDefaultMessage();
             return $message;
         } else {
-            $message = $this->messageList;
-            shuffle($message);
-            return $message[0];
+            $rand = array_rand($this->messageList,1);
+            $message[$rand] = $this->messageList[$rand];
+            return $message;
         }
 
     }
