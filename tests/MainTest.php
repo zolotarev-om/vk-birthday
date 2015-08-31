@@ -19,29 +19,29 @@ class MainTest extends TestCase
         parent::tearDown();
     }
 
-    public function testMainPageRedirectIfNotLoggedIn()
+    public function testRedirectFromMainPageIfNotLoggedIn()
     {
         $this->visit('/')->seePageIs(route('login'));
     }
 
-    public function testMainPageIfLoggedIn()
+    public function testSeeMainPageIfLoggedIn()
     {
         $user = App\User::whereId(1)->first();
         $this->actingAs($user)->visit(route('main'))->seePageIs(route('main'));
     }
 
-    public function testSettingPageIfNotLoggedIn()
+    public function testRedirectFromSettingPageIfNotLoggedIn()
     {
         $this->visit(route('setting'))->seePageIs(route('login'));
     }
 
-    public function testSettingPageIfLoggedIn()
+    public function testSeeSettingPageIfLoggedIn()
     {
         $user = App\User::whereId(1)->first();
         $this->actingAs($user)->visit(route('setting'))->seePageIs(route('setting'));
     }
 
-    public function testAnyPageIfNotLoggedIn()
+    public function testErrorPage()
     {
         $this->get(Faker\Factory::create()->slug())->seeStatusCode(404);
     }
