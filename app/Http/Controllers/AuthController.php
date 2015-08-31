@@ -52,8 +52,7 @@ class AuthController extends Controller
      */
     public function loginSocialUser()
     {
-        $socialUser = Socialite::with(self::PROVIDER)->user();
-        $user = $this->users->findByUidOrCreate($socialUser, self::PROVIDER);
+        $user = $this->users->findByUidOrCreate($this->getSocialUser(), self::PROVIDER);
 
         Auth::login($user, true);
 
@@ -96,5 +95,13 @@ class AuthController extends Controller
             }
         }
         return view('login');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSocialUser()
+    {
+        return Socialite::with(self::PROVIDER)->user();
     }
 }
