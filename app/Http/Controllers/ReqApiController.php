@@ -38,22 +38,11 @@ class ReqApiController extends Controller
     }
 
     /**
-     * Execute fetchFriendsApi and return user's friends array
-     *
-     * @return array
-     */
-    public function getFriends()
-    {
-        $this->fetchFriendsApi();
-        return $this->friends;
-    }
-
-    /**
      * Fetch user's friends via VK api
      *
      * @return array|false
      */
-    private function fetchFriendsApi()
+    public function getFriends()
     {
         $this->vk->request('friends.get', [
             'user_id' => $this->user,
@@ -70,11 +59,12 @@ class ReqApiController extends Controller
                     unset($friend->lists);
 
                     $count = count($this->friends) + 1;
-                    return $this->friends[$count] = (array)$friend;
+                    $this->friends[$count] = (array)$friend;
                 } else {
                     return false;
                 }
             });
+        return $this->friends;
     }
 
     /**
