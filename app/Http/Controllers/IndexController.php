@@ -77,9 +77,8 @@ class IndexController extends Controller
         $bdayers = $this->bday->friendsForCongratulations();
 
         if (!empty($bdayers)) {
-            $msg = $this->messageRep->getRandomMessage();
-
             foreach ($bdayers as $friend) {
+                $msg = $this->messageRep->getRandomMessage();
                 $this->sendMessage($friend, current($msg)); //text message
                 $this->gratterRep->addSendedGratters($friend['vk_id'], key($msg)); // key(id) message
             }
