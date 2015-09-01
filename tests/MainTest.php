@@ -4,12 +4,33 @@ class MainTest extends TestCase
 {
     use \Illuminate\Foundation\Testing\DatabaseTransactions;
 
+    /**
+     * @var App\User
+     */
+    private $user;
+    /**
+     * @var \Mockery\Mock
+     */
+    private $mockIndex;
+    /**
+     * @var \Mockery\Mock
+     */
+    private $mockSetting;
+
     public function setUp()
     {
         parent::setUp();
 
-        $mockIndex = Mockery::mock(App\Http\Controllers\IndexController::class);
-        $mockSetting = Mockery::mock(App\Http\Controllers\SettingController::class);
+        $this->user = App\User::whereId(1)->first();
+
+        $this->mockIndex = Mockery::mock(\App\Http\Controllers\IndexController::class)->makePartial();
+        $this->mockIndex->shouldReceive('index')->andReturn(view('index', ['latest' => [], 'upcoming' => []]));
+
+        $this->mockSetting = Mockery::mock(\App\Http\Controllers\SettingController::class)->makePartial();
+        $this->mockSetting->shouldReceive('index')->andReturn(view('setting', ['message' => [], 'token' => '']));
+
+        $this->app->instance('App\Http\Controllers\IndexController', $this->mockIndex);
+        $this->app->instance('App\Http\Controllers\SettingController', $this->mockSetting);
     }
 
     public function tearDown()
@@ -26,8 +47,7 @@ class MainTest extends TestCase
 
     public function testSeeMainPageIfLoggedIn()
     {
-        $user = App\User::whereId(1)->first();
-        $this->actingAs($user)->visit(route('main'))->seePageIs(route('main'));
+        $this->actingAs($this->user)->visit(route('main'))->seePageIs(route('main'));
     }
 
     public function testRedirectFromSettingPageIfNotLoggedIn()
@@ -37,8 +57,7 @@ class MainTest extends TestCase
 
     public function testSeeSettingPageIfLoggedIn()
     {
-        $user = App\User::whereId(1)->first();
-        $this->actingAs($user)->visit(route('setting'))->seePageIs(route('setting'));
+        $this->actingAs($this->user)->visit(route('setting'))->seePageIs(route('setting'));
     }
 
     public function testErrorPage()
