@@ -10,22 +10,17 @@ class AuthControllerTest extends TestCase
     use \Illuminate\Foundation\Testing\DatabaseTransactions;
 
     /**
-     * @var AuthController
-     */
-    protected $class;
-    /**
-     * @var \App\Repositories\UserRepository
+     * @var \Mockery\Mock
      */
     private $mockRep;
     /**
-     * @var AuthController
+     * @var \Mockery\Mock
      */
     private $mockAuth;
     /**
      * @var App\User
      */
     private $user;
-    private $soc;
 
     /**
      *
@@ -39,9 +34,13 @@ class AuthControllerTest extends TestCase
         $this->mockRep = Mockery::mock(App\Repositories\UserRepository::class);
         $this->mockRep->shouldReceive('findByUidOrCreate')->andReturn($this->user);
 
-        $this->mockAuth = Mockery::mock('App\Http\Controllers\AuthController[getSocialUser,getAuthorizationFirst]',[$this->mockRep]);
+        $this->mockAuth = Mockery::mock('App\Http\Controllers\AuthController[getSocialUser,getAuthorizationFirst]',
+            [$this->mockRep]);
         $this->mockAuth->shouldReceive('getSocialUser')->andReturn($this->user);
         $this->mockAuth->shouldReceive('getAuthorizationFirst')->andReturn(redirect('http://oauth.vk.com'));
+
+        $this->app->instance('App\Repositories\UserRepository', $this->mockRep);
+        $this->app->instance('App\Http\Controllers\AuthController', $this->mockAuth);
     }
 
     public function tearDown()
@@ -62,16 +61,14 @@ class AuthControllerTest extends TestCase
         Auth::shouldReceive('login')
             ->once()
             ->with($this->user, true);
-        $resp = $this->mockAuth->loginSocialUser();
-        $this->assertInstanceOf(\Illuminate\Http\RedirectResponse::class, $resp);
-        $this->assertEquals(env('APP_URL'), $resp->getTargetUrl());
+        $this->action('GET', 'AuthController@loginSocialUser');
+        $this->assertRedirectedTo('/');
     }
 
     public function testProcessVkAuth()
     {
-        $resp = $this->mockAuth->getAuthorizationFirst();
-        $this->assertInstanceOf(\Illuminate\Http\RedirectResponse::class, $resp);
-        $this->assertEquals('http://oauth.vk.com', $resp->getTargetUrl());
+        $this->action('GET', 'AuthController@getAuthorizationFirst');
+        $this->assertRedirectedTo('http://oauth.vk.com');
     }
 
     public function testLogout()
@@ -79,8 +76,7 @@ class AuthControllerTest extends TestCase
         Auth::shouldReceive('logout')
             ->once()
             ->withNoArgs();
-        $resp = $this->mockAuth->logout();
-        $this->assertInstanceOf(\Illuminate\Http\RedirectResponse::class, $resp);
-        $this->assertEquals(route('login'), $resp->getTargetUrl());
+        $this->action('GET', 'AuthController@logout');
+        $this->assertRedirectedToRoute('login');
     }
 }
