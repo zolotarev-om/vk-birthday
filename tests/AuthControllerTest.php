@@ -6,7 +6,6 @@
  */
 class AuthControllerTest extends TestCase
 {
-    use \Illuminate\Foundation\Testing\WithoutMiddleware;
     use \Illuminate\Foundation\Testing\DatabaseTransactions;
 
     /**
