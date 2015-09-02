@@ -86,8 +86,9 @@ class MessageRepository
     private function createDefaultMessage()
     {
         $text = 'С Днём Рождения!';
-        Auth::user()->messages()->create(['text' => $text]);
-        return $text;
+        $res = Auth::user()->messages()->create(['text' => $text]);
+
+        return [$res->id => $text];
     }
 
     /**
