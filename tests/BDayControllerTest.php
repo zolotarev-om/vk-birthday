@@ -74,7 +74,8 @@ class BDayControllerTest extends TestCase
             ],
         ];
 
-        $this->mockReqApi = Mockery::mock(\App\Http\Controllers\ReqApiController::class)->makePartial();
+        $this->mockReqApi = Mockery::mock(\App\Http\Controllers\ReqApiController::class);
+        $this->mockReqApi->shouldReceive('setup')->once()->andReturnSelf();
         $this->mockReqApi->shouldReceive('getFriends')->once()->andReturn($friends);
 
         $this->mockUserRep = Mockery::mock(\App\Repositories\UserRepository::class)->makePartial();
