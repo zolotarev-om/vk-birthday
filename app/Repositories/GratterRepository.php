@@ -77,7 +77,7 @@ class GratterRepository
     {
         $uid = filter_var($uid, FILTER_SANITIZE_NUMBER_INT);
 
-        $gratters = Cache::remember('gratters_to_' . Auth::id() . '_' . $uid, 60, function ($uid) {
+        $gratters = Cache::remember('gratters_to_' . Auth::id() . '_' . $uid, 60, function () use ($uid) {
             return Auth::user()->gratters()->where('to', '=', $uid)->where('year', '=', date('Y'))->first();
         });
 
