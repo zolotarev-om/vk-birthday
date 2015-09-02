@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use getjump\Vk;
+use getjump\Vk\Core;
 
 /**
  * Class ReqApiController
@@ -21,7 +21,7 @@ class ReqApiController extends Controller
     private $token;
 
     /**
-     * @var Vk\Core Getjump VK instance
+     * @var Core Getjump VK instance
      */
     private $vk;
     /**
@@ -31,10 +31,12 @@ class ReqApiController extends Controller
 
     /**
      * Setup "guest" VK instance
+     *
+     * @param Core $vk
      */
-    public function __construct()
+    public function __construct(Core $vk)
     {
-        $this->vk = Vk\Core::getInstance();
+        $this->vk = $vk;
     }
 
     /**
@@ -57,7 +59,7 @@ class ReqApiController extends Controller
                     $friend->bdate = $this->formatBDate($friend->bdate);
                     unset($friend->online);
                     unset($friend->lists);
-
+                    
                     $count = count($this->friends) + 1;
                     $this->friends[$count] = (array)$friend;
                 } else {
@@ -119,7 +121,7 @@ class ReqApiController extends Controller
         $vkUserId = filter_var($vkUserId, FILTER_SANITIZE_NUMBER_INT);
         $apiVer = filter_var($apiVer, FILTER_SANITIZE_NUMBER_FLOAT);
 
-        $this->vk = Vk\Core::getInstance()->apiVersion($apiVer)->setToken($vkToken);
+        $this->vk->apiVersion($apiVer)->setToken($vkToken);
         $this->user = $vkUserId;
         return $this;
     }
@@ -138,8 +140,7 @@ class ReqApiController extends Controller
         $obj = $this->vk->request('users.get', [
             'user_ids' => $uid,
             'fields'   => 'photo_100',
-        ])
-            ->get();
+        ])->get();
 
         $data = ['avatar' => $obj->photo_100, 'name' => $obj->first_name . ' ' . $obj->last_name];
 
@@ -156,8 +157,10 @@ class ReqApiController extends Controller
     {
         if (env('APP_ENV') == 'local' || env('APP_DEBUG') == 'true') {
             var_dump("WallMsg: $msg; To: $uid");
+            return true;
         } else {
             $this->vk->request('wall.post', ['owner_id' => $uid, 'message' => $msg])->execute();
+            return true;
         }
     }
 
@@ -171,8 +174,10 @@ class ReqApiController extends Controller
     {
         if (env('APP_ENV') == 'local' || env('APP_DEBUG') == 'true') {
             var_dump("PrivateMsg: $msg; To: $uid");
+            return false;
         } else {
             $this->vk->request('messages.send', ['user_id' => $uid, 'message' => $msg])->execute();
+            return true;
         }
     }
 }
