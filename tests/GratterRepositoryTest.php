@@ -9,6 +9,11 @@ class GratterRepositoryTest extends TestCase
      */
     private $class;
 
+    /**
+     * @var App\User
+     */
+    private $user;
+
     public function setUp()
     {
         parent::setUseTestDb(true);
