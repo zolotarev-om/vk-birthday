@@ -6,6 +6,7 @@ namespace App\Repositories;
 use App\Provider;
 use App\User;
 use Auth;
+use Cache;
 
 /**
  * Class UserRepository
@@ -28,9 +29,11 @@ class UserRepository
      */
     public function findByUidOrCreate($userData, $provider)
     {
-        $user = User::whereHas('providers', function ($query) use ($provider, $userData) {
-            $query->where('name', '=', $provider)->where('uid', '=', $userData->id);
-        })->first();
+        $user = Cache::remember('user_' . $userData->id, 60, function () use ($userData, $provider) {
+            return User::whereHas('providers', function ($query) use ($provider, $userData) {
+                $query->where('name', '=', $provider)->where('uid', '=', $userData->id);
+            })->first();
+        });
 
         if (empty($user)) {
             $providers = new Provider;
@@ -60,7 +63,7 @@ class UserRepository
      * @param $userData User
      * @param $user User
      */
-    public function checkIfUserNeedsUpdating($userData, $user)
+    private function checkIfUserNeedsUpdating($userData, $user)
     {
         $socialData = [
             'avatar'   => $userData->avatar,
@@ -100,14 +103,12 @@ class UserRepository
 
     /**
      * Once getting the providers relationship
-     *
-     * TODO: rewrite method to use Cache
      */
     private function getProviders()
     {
-        if (empty($this->gratters)) {
-            $this->providers = Auth::user()->providers()->get();
-        }
+        $this->providers = Cache::remember('providers_' . Auth::id(), 10, function () {
+            return Auth::user()->providers()->get();
+        });
     }
 
     /**

@@ -10,6 +10,11 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     protected $baseUrl = 'http://localhost';
 
     /**
+     * @var bool
+     */
+    private $useTestDb = false;
+
+    /**
      * Creates the application.
      *
      * @return \Illuminate\Foundation\Application
@@ -21,5 +26,22 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
         return $app;
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+        if ($this->useTestDb) {
+            putenv('DB_CONNECTION=testing');
+            Artisan::call('migrate:refresh');
+        }
+    }
+
+    /**
+     * @param boolean $useTestDb
+     */
+    public function setUseTestDb($useTestDb)
+    {
+        $this->useTestDb = $useTestDb;
     }
 }

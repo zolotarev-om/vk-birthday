@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Gratter;
 use Auth;
+use Cache;
 
 /**
  * Class GratterRepository
@@ -41,9 +42,9 @@ class GratterRepository
      */
     private function getGratters()
     {
-        if (empty($this->gratters)) {
-            $this->gratters = Auth::user()->gratters()->where('year', '=', date('Y'))->get();
-        }
+        $this->gratters = Cache::remember('gratters_' . Auth::id(), 60, function () {
+            return Auth::user()->gratters()->where('year', '=', date('Y'))->get();
+        });
     }
 
     /**
@@ -76,7 +77,9 @@ class GratterRepository
     {
         $uid = filter_var($uid, FILTER_SANITIZE_NUMBER_INT);
 
-        $gratters = Auth::user()->gratters()->where('to', '=', $uid)->where('year', '=', date('Y'))->first();
+        $gratters = Cache::remember('gratters_to_' . Auth::id() . '_' . $uid, 60, function () use ($uid) {
+            return Auth::user()->gratters()->where('to', '=', $uid)->where('year', '=', date('Y'))->first();
+        });
 
         return $gratters->message_id;
     }
@@ -92,7 +95,10 @@ class GratterRepository
     {
         $count = filter_var($count, FILTER_SANITIZE_NUMBER_INT);
 
-        $myGratter = Gratter::where('user_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        $myGratter = Cache::remember('latest_gratters_' . Auth::id(), 10, function () {
+            return Gratter::where('user_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        });
+
         return $myGratter->take($count)->reverse()->toArray();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Auth;
+use Cache;
 
 /**
  * Class MessageRepository
@@ -11,18 +12,36 @@ use Auth;
 class MessageRepository
 {
     /**
+     * List of user messages
+     *
+     * @var array
+     */
+    private $messageList = [];
+
+    /**
+     * MessageRepository constructor.
+     */
+    public function __construct()
+    {
+        $this->getMessageList();
+    }
+
+    /**
      * Get a list of user messages
      *
      * @return array
      */
     public function getMessageList()
     {
-        $messages = Auth::user()->messages()->get();
-        $messageList = [];
+        $messages = Cache::remember('message_list_' . Auth::id(), 60, function () {
+            return Auth::user()->messages()->get();
+        });
+
         foreach ($messages as $message) {
-            $messageList[$message->id] = $message->text;
+            $this->messageList[$message->id] = $message->text;
         }
-        return $messageList;
+
+        return $this->messageList;
     }
 
     /**
@@ -36,11 +55,10 @@ class MessageRepository
     {
         $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
 
-        $message = Auth::user()->messages()->where('id', '=', $id)->first();
-        if (is_null($message)) {
+        if (!array_key_exists($id, $this->messageList)) {
             return false;
         } else {
-            return $message->text;
+            return $this->messageList[$id];
         }
     }
 
@@ -51,13 +69,12 @@ class MessageRepository
      */
     public function getRandomMessage()
     {
-        $message = Auth::user()->messages()->get();
-        if ($message->isEmpty()) {
-            $this->createDefaultMessage();
-            $message = Auth::user()->messages()->get()->first();
+        if (empty($this->messageList)) {
+            $message = $this->createDefaultMessage();
             return $message;
         } else {
-            $message = $message->shuffle()->first();
+            $rand = array_rand($this->messageList,1);
+            $message[$rand] = $this->messageList[$rand];
             return $message;
         }
 
@@ -68,7 +85,10 @@ class MessageRepository
      */
     private function createDefaultMessage()
     {
-        Auth::user()->messages()->create(['text' => 'С Днём Рождения!']);
+        $text = 'С Днём Рождения!';
+        $res = Auth::user()->messages()->create(['text' => $text]);
+
+        return [$res->id => $text];
     }
 
     /**
@@ -85,6 +105,7 @@ class MessageRepository
         $notExist = Auth::user()->messages()->where('text', '=', $text)->get()->isEmpty();
         if ($notExist) {
             Auth::user()->messages()->create(['text' => $text]);
+            Cache::forget('message_list_' . Auth::id());
             return true;
         } else {
             return false;
