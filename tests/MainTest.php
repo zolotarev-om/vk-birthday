@@ -19,6 +19,7 @@ class MainTest extends TestCase
 
     public function setUp()
     {
+        parent::setUseTestDb(false);
         parent::setUp();
 
         $this->user = App\User::whereId(1)->first();
