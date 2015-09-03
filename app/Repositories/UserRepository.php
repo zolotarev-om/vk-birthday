@@ -63,7 +63,7 @@ class UserRepository
      * @param $userData User
      * @param $user User
      */
-    public function checkIfUserNeedsUpdating($userData, $user)
+    private function checkIfUserNeedsUpdating($userData, $user)
     {
         $socialData = [
             'avatar'   => $userData->avatar,
