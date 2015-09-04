@@ -15,8 +15,6 @@ class MessageRepositoryTest extends TestCase
 
     public function setUp()
     {
-        parent::setUseTestDb(true);
-
         parent::setUp();
 
         factory(App\User::class, 1)->create();

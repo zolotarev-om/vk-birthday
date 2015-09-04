@@ -31,9 +31,9 @@ class IndexControllerTest extends TestCase
 
     public function setUp()
     {
-        parent::setUseTestDb(false);
         parent::setUp();
 
+        factory(App\User::class,3)->create();
         $this->be(App\User::all()->first());
 
         $this->mockReqApi = Mockery::mock(\App\Http\Controllers\ReqApiController::class)->makePartial();

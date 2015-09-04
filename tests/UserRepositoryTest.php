@@ -16,8 +16,6 @@ class UserRepositoryTest extends TestCase
 
     public function setUp()
     {
-        parent::setUseTestDb(true);
-
         parent::setUp();
 
         factory(App\User::class, 3)->create();
