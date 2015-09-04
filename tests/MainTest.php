@@ -19,10 +19,10 @@ class MainTest extends TestCase
 
     public function setUp()
     {
-        parent::setUseTestDb(false);
         parent::setUp();
 
-        $this->user = App\User::whereId(1)->first();
+        factory(App\User::class,3)->create();
+        $this->user = App\User::all()->first();
 
         $this->mockIndex = Mockery::mock(\App\Http\Controllers\IndexController::class)->makePartial();
         $this->mockIndex->shouldReceive('index')->andReturn(view('index', ['latest' => [], 'upcoming' => []]));

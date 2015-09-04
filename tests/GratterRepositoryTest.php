@@ -16,7 +16,6 @@ class GratterRepositoryTest extends TestCase
 
     public function setUp()
     {
-        parent::setUseTestDb(true);
         parent::setUp();
 
         $this->class = new \App\Repositories\GratterRepository();
