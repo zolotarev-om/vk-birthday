@@ -30,21 +30,13 @@ class GratterRepository
     {
         $uid = filter_var($uid, FILTER_SANITIZE_NUMBER_INT);
 
-        $this->getGratters();
+        $gratters = Auth::user()->gratters()->where('year', '=', date('Y'))->where('to', '=', $uid)->get();
 
-        $uidGratters = $this->gratters->contains('to', $uid);
-
-        return $uidGratters;
-    }
-
-    /**
-     * Eager loading sended user gratters in this year
-     */
-    private function getGratters()
-    {
-        $this->gratters = Cache::remember('gratters_' . Auth::id(), 60, function () {
-            return Auth::user()->gratters()->where('year', '=', date('Y'))->get();
-        });
+        if ($gratters->isEmpty()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
