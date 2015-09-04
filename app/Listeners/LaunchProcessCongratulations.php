@@ -2,16 +2,15 @@
 
 namespace App\Listeners;
 
+use App\Events\ThereFriendsForCongratulations;
 use App\Events\UserLoginToMainPage;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class LaunchProcessCongratulations
+class LaunchProcessCongratulations implements ShouldQueue
 {
     /**
      * Create the event listener.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -21,11 +20,15 @@ class LaunchProcessCongratulations
     /**
      * Handle the event.
      *
-     * @param  UserLoginToMainPage  $event
+     * @param  UserLoginToMainPage $event
+     *
      * @return void
      */
     public function handle(UserLoginToMainPage $event)
     {
-        //
+        $bdayers = $event->bday->friendsForCongratulations();
+        if (!empty($bdayers)) {
+            \Event::fire(new ThereFriendsForCongratulations($bdayers));
+        }
     }
 }
