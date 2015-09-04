@@ -24,22 +24,27 @@ class IndexControllerTest extends TestCase
      * @var App\Http\Controllers\IndexController
      */
     private $class;
+    /**
+     * @var \Mockery\Mock
+     */
+    private $mockEvent;
 
     public function setUp()
     {
+        parent::setUseTestDb(false);
         parent::setUp();
+
+        $this->be(App\User::all()->first());
 
         $this->mockReqApi = Mockery::mock(\App\Http\Controllers\ReqApiController::class)->makePartial();
         $this->mockMsgRep = Mockery::mock(\App\Repositories\MessageRepository::class)->makePartial();
         $this->mockGratRep = Mockery::mock(\App\Repositories\GratterRepository::class)->makePartial();
         $this->mockBDay = Mockery::mock(\App\Http\Controllers\BDayController::class)->makePartial();
 
-        $this->class = new \App\Http\Controllers\IndexController(
-            $this->mockReqApi,
-            $this->mockMsgRep,
-            $this->mockGratRep,
-            $this->mockBDay
-        );
+        $this->app->instance('App\Http\Controllers\ReqApiController', $this->mockReqApi);
+        $this->app->instance('App\Repositories\GratterRepository', $this->mockGratRep);
+        $this->app->instance('App\Http\Controllers\BDayController', $this->mockBDay);
+        $this->app->instance('App\Repositories\MessageRepository', $this->mockMsgRep);
     }
 
     public function tearDown()
@@ -96,7 +101,7 @@ class IndexControllerTest extends TestCase
             'avatar' => 'https://pp.vk.me/c627829/v627829149/11748/W9B6fpzHZEQ.jpg',
             'name'   => 'Ирина Линдерман',
         ];
-        $message = ['C ДР!'];
+        $message = 'C ДР!';
         $upcomingBDay = [
             0 => [
                 'bdate'                     => '02.09',
@@ -124,25 +129,13 @@ class IndexControllerTest extends TestCase
             ],
         ];
 
-        $this->mockBDay->shouldReceive('friendsForCongratulations')->withNoArgs()->once()->andReturn($friendsForCongrats);
         $this->mockBDay->shouldReceive('upcomingBday')->withNoArgs()->once()->andReturn($upcomingBDay);
-
         $this->mockGratRep->shouldReceive('latestGratters')->withNoArgs()->once()->andReturn($latestCongrats);
-        $this->mockGratRep->shouldReceive('addSendedGratters')->withAnyArgs()->twice()->andReturnNull();;
-
         $this->mockReqApi->shouldReceive('fetchNameAndAvatar')->withAnyArgs()->twice()->andReturn($nameAndAvatar);
-        $this->mockReqApi->shouldReceive('sendToWall')->withAnyArgs()->once()->andReturnNull();
-        $this->mockReqApi->shouldReceive('sendToPrivate')->withAnyArgs()->once()->andReturnNull();
-
         $this->mockMsgRep->shouldReceive('getMessageTextById')->withAnyArgs()->twice()->andReturn($message);
-        $this->mockMsgRep->shouldReceive('getRandomMessage')->withNoArgs()->twice()->andReturn($message);
 
-        $resp = $this->class->index();
-        $resp = $resp->getData();
-
-        $this->assertArrayHasKey('upcoming', $resp);
-        $this->assertArrayHasKey('latest', $resp);
-        $this->assertCount(count($upcomingBDay), $resp['upcoming']);
-        $this->assertCount(count($latestCongrats), $resp['latest']);
+        Event::shouldReceive('fire')->zeroOrMoreTimes();
+        $this->action('GET', 'IndexController@index');
+        $this->assertViewHas(['upcoming', 'latest']);
     }
 }
