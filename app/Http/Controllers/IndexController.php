@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Events\UserLoginToMainPage;
 use App\Repositories\GratterRepository;
 use App\Repositories\MessageRepository;
 use Carbon\Carbon;
+use Event;
 
 /**
  * Class IndexController
@@ -59,7 +61,8 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $this->processCongratulations();
+        Event::fire(new UserLoginToMainPage($this->bday));
+        //$this->processCongratulations();
 
         $data = [];
         $data['latest'] = $this->formatLatestGratters();
