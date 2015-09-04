@@ -2,22 +2,25 @@
 
 namespace App\Events;
 
-use App\Events\Event;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class ThereFriendsForCongratulations extends Event
 {
     use SerializesModels;
 
     /**
+     * @var array
+     */
+    public $bdayers;
+
+    /**
      * Create a new event instance.
      *
-     * @return void
+     * @param $bdayers
      */
-    public function __construct()
+    public function __construct($bdayers)
     {
-        //
+        $this->bdayers = $bdayers;
     }
 
     /**

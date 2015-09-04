@@ -11,13 +11,25 @@ class SendMessageToFriendsWhoseBirthday extends Event
     use SerializesModels;
 
     /**
+     * @var array
+     */
+    public $message;
+
+    /**
+     * @var array
+     */
+    public $friend;
+
+    /**
      * Create a new event instance.
      *
-     * @return void
+     * @param $message
+     * @param $friend
      */
-    public function __construct()
+    public function __construct($message, $friend)
     {
-        //
+        $this->message = $message;
+        $this->friend = $friend;
     }
 
     /**

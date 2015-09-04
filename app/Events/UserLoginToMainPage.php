@@ -2,22 +2,27 @@
 
 namespace App\Events;
 
-use App\Events\Event;
+use App\Http\Controllers\BDayController;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class UserLoginToMainPage extends Event
 {
     use SerializesModels;
 
     /**
+     * @var BDayController
+     */
+    public $bday;
+
+
+    /**
      * Create a new event instance.
      *
-     * @return void
+     * @param BDayController $BDayController
      */
-    public function __construct()
+    public function __construct(BDayController $BDayController)
     {
-        //
+        $this->bday = $BDayController;
     }
 
     /**
