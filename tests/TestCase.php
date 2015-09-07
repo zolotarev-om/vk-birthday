@@ -12,7 +12,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     /**
      * @var bool
      */
-    private $useTestDb = false;
+    private $useTestDb = true;
 
     /**
      * Creates the application.

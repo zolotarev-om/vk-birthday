@@ -13,8 +13,15 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\SomeEvent'                          => [
-            'App\Listeners\EventListener',
+        'App\Events\UserLoginToMainPage'                => [
+            'App\Listeners\LaunchProcessCongratulations',
+        ],
+        'App\Events\ThereFriendsForCongratulations'     => [
+            'App\Listeners\PreparationCongratulations',
+        ],
+        'App\Events\SendMessageToFriendsWhoseBirthday'     => [
+            'App\Listeners\SendMessageInVk',
+            'App\Listeners\AddSendedMessageToDB',
         ],
         'SocialiteProviders\Manager\SocialiteWasCalled' => [
             'SocialiteProviders\VKontakte\VKontakteExtendSocialite@handle',
