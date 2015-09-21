@@ -9,13 +9,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 @include('nav')
-<div class="container">
-    <div class="row">
-        <div class="col-md-10 center-block">
-            @yield('content')
-        </div>
-    </div>
+
+<div class="containerv clearfix">
+    @yield('content')
 </div>
+
 </body>
 </html>
