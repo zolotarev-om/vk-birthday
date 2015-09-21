@@ -21,6 +21,10 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
      */
     public function createApplication()
     {
+        if ($this->useTestDb) {
+            putenv('DB_CONNECTION=testing');
+        }
+
         $app = require __DIR__ . '/../bootstrap/app.php';
 
         $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
@@ -32,7 +36,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
     {
         parent::setUp();
         if ($this->useTestDb) {
-            putenv('DB_CONNECTION=testing');
             Artisan::call('migrate:refresh');
         }
     }

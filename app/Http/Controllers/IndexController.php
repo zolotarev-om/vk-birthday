@@ -71,6 +71,16 @@ class IndexController extends Controller
     }
 
     /**
+     * Render about page
+     *
+     * @return \Illuminate\View\View
+     */
+    public function about()
+    {
+        return view('about');
+    }
+
+    /**
      * Formatting last gratters to be displayed on the main page
      *
      * @return array
