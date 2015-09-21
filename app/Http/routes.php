@@ -1,6 +1,7 @@
 <?php
 
 Route::get('/', ['as' => 'main', 'middleware' => ['auth','cache.dynamic'], 'uses' => 'IndexController@index']);
+Route::get('/about', ['as' => 'main', 'middleware' => ['cache.dynamic'], 'uses' => 'IndexController@about']);
 
 Route::get('login', ['as' => 'login', 'uses' => 'AuthController@loginPage']);
 Route::get('login/vk', ['as' => 'loginVk', 'uses' => 'AuthController@getAuthorizationFirst']);
